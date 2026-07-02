@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,15 +18,18 @@ public class WavInfo {
             System.exit(1);
         }
 
-        byte[] headerBytes = new byte[80];
         File f = new File(filename);
-        try(FileInputStream in = new FileInputStream(f)) {
-            in.read(headerBytes);
-        }
-        catch(IOException e) {
+        try(FileInputStream fis = new FileInputStream(f)) {
+            readFile(fis);
+        } catch(IOException e) {
             System.err.println("Error: Could not read file: " + filename);
             System.exit(1);
         }
+    }
+
+    public static void readFile(FileInputStream fis) throws IOException {
+        byte[] headerBytes = new byte[36];
+        fis.read(headerBytes);
 
         //Bytes 0-3 are the RIFF marker
         String riffMarker = new String(headerBytes, 0, 4);
@@ -90,6 +94,31 @@ public class WavInfo {
         //Bytes 34-35 are the bits per sample (audio resolution)
         short bitsPerSample = readShort(headerBytes, 34);
         System.out.println("Bits per sample: " + bitsPerSample + "-bit");
+
+        //Handles other metadata and the data chunk
+        boolean dataFound = false;
+        int audioDataSize = 0;
+        while(!dataFound) {
+            byte[] markerBytes = new byte[4];
+            byte[] sizeBytes = new byte[4];
+            fis.read(markerBytes);
+            fis.read(sizeBytes);
+
+            String chunkMarker = new String(markerBytes);
+            int chunkSize = readInt(sizeBytes, 0);
+            System.out.println("Encountered chunk: " + chunkMarker + " (" +
+                    chunkSize + " bytes)");
+
+            if(chunkMarker.equals("data")) {
+                audioDataSize = chunkSize;
+                dataFound = true;
+                System.out.println("Audio data chunk found (" + audioDataSize + " bytes)");
+            }
+            else {
+                System.out.println("Skipping " + chunkSize + " bytes of metadata...");
+                fis.skip(chunkSize);
+            }
+        }
     }
 
     public static int readInt(byte[] arr, int offset) {
