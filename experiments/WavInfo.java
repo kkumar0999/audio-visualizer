@@ -1,7 +1,6 @@
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -67,6 +66,7 @@ public class WavInfo {
             System.exit(1);
         }
 
+        //TODO make format chunk parsing dynamic
         //Bytes 16-19 are the format chunk size in Little Endian
         int fmtChunkSize = readInt(headerBytes, 16);
         System.out.println("Format chunk size: " + fmtChunkSize + " bytes");
