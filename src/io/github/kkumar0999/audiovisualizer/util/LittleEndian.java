@@ -1,4 +1,4 @@
-package io.github.kkumar0999.audiovisualizer.audio;
+package io.github.kkumar0999.audiovisualizer.util;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

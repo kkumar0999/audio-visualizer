@@ -1,6 +1,6 @@
 package io.github.kkumar0999.audiovisualizer.audio;
 
-import static io.github.kkumar0999.audiovisualizer.audio.LittleEndian.*;
+import static io.github.kkumar0999.audiovisualizer.util.LittleEndian.*;
 
 /**
  * @author  Krish Kumar
