@@ -2,6 +2,10 @@ package io.github.kkumar0999.audiovisualizer.audio;
 
 import static io.github.kkumar0999.audiovisualizer.audio.LittleEndian.*;
 
+/**
+ * @author  Krish Kumar
+ * @since   July 2, 2026
+ */
 public class FormatChunk {
     private final int size;
 

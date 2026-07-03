@@ -5,6 +5,16 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+/*
+ * An experiment for learning about the internals of a WAV file. This program
+ * prints some information about a WAV file.
+ *
+ * This program is not intended for use. It's simply here as a reference for my
+ * actual code.
+ *
+ * Started: July 1, 2026
+ * Ended: July 2, 2026
+ */
 public class WavInfo {
     public static void main(String[] args) {
         Scanner read = new Scanner(System.in);

@@ -2,24 +2,20 @@ package io.github.kkumar0999.audiovisualizer.audio;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import static io.github.kkumar0999.audiovisualizer.audio.LittleEndian.*;
 
+/**
+ * @author  Krish Kumar
+ * @since   July 2, 2026
+ */
 //TODO add error guarding for EOF
+//TODO refactor audio stuff into AudioData class
 public class WavFile {
     private final String filePath;
     private int fileSize;
     private int audioSize;
 
     private FormatChunk formatData;
-
-    //Format chunk
-    private int formatType;
-    private int numChannels;
-    private int sampleRate;
-    private int byteRate;
-    private int bytesPerSample;
-    private int bitsPerSample;
 
     private short[] leftChannel;
     private short[] rightChannel;
@@ -58,15 +54,10 @@ public class WavFile {
 
                 //TODO handle different sized fmt chunks
                 if(chunkMarker.equals("fmt ")) {
-                    byte[] fmtBytes = new byte[chunkSize];
-                    fis.read(fmtBytes);
+                    byte[] fmtPayload = new byte[chunkSize];
+                    fis.read(fmtPayload);
 
-                    formatType = readShort(fmtBytes, 0);
-                    numChannels = readShort(fmtBytes, 2);
-                    sampleRate = readInt(fmtBytes, 4);
-                    byteRate = readInt(fmtBytes, 8);
-                    bytesPerSample = readShort(fmtBytes, 12);
-                    bitsPerSample = (chunkSize >= 16) ? readShort(fmtBytes, 14) : 8;
+                    formatData = new FormatChunk(fmtPayload);
                 }
                 else if(chunkMarker.equals("data")) {
                     audioSize = chunkSize;
@@ -80,26 +71,6 @@ public class WavFile {
         }
     }
 
-    private int readInt(byte[] arr, int offset) {
-        return ByteBuffer.wrap(arr, offset, 4)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .getInt();
-    }
-
-    private int readInt(byte[] arr) {
-        return readInt(arr, 0);
-    }
-
-    private int readShort(byte[] arr, int offset) {
-        return ByteBuffer.wrap(arr, offset, 2)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .getInt();
-    }
-
-    private int readShort(byte[] arr) {
-        return readShort(arr, 0);
-    }
-
     public String getFilePath() {
         return filePath;
     }
@@ -108,7 +79,27 @@ public class WavFile {
         return fileSize;
     }
 
-    public int getAudioSize() {
-        return audioSize;
+    public int getFormatType() {
+        return formatData.getFormatType();
+    }
+
+    public int getNumChannels() {
+        return formatData.getNumChannels();
+    }
+
+    public int getSampleRate() {
+        return formatData.getSampleRate();
+    }
+
+    public int getByteRate() {
+        return formatData.getByteRate();
+    }
+
+    public int getBytesPerSample() {
+        return formatData.getBytesPerSample();
+    }
+
+    public int getBitsPerSample() {
+        return formatData.getBitsPerSample();
     }
 }
